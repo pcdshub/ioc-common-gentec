@@ -1,0 +1,14 @@
+file gentecALL.db
+{
+        {
+                BASE=$(BASE)
+        }
+}
+
+file gentecCH.db
+{
+	pattern
+	{ CHAN }
+	{  0   }
+	{  1   }
+}

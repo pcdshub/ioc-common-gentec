@@ -1,0 +1,4 @@
+#
+# Assume $(BASE) is the base PV, $(CHAN) is the channel number, and $(PORT) is
+# the asyn port.
+#
