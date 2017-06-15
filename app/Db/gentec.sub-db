@@ -9,6 +9,6 @@ file gentecCH.db
 {
 	pattern
 	{ CHAN }
-	{  0   }
 	{  1   }
+	{  2   }
 }

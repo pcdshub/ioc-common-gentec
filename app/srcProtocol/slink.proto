@@ -1,0 +1,41 @@
+# Gentec Slink Protocol 
+#
+###################################################
+# Interface: ASCII
+# Two Energy/Power Meter Inputs
+#
+
+InTerminator = ;
+OutTerminator = CR LF;
+ReplyTimeout  =  500;
+ReadTimeout   =  100;
+WriteTimeout  =  100;
+ExtraInput    = Ignore;
+
+SLNK:SET_ACQ                { out "*CA\$1";       in "ACK\r\n"; } 
+SLNK:RESET                  { out "*RST";         in "ACK\r\n"; } 
+SLNK:GET_VERSION            { out "*VER";         in "Monitor Version %s\r\n"; } 
+SLNK:GET_WAVLEN             { out "*ST\$1";       in ":00000%4X\r\n:00001%*4X\r\n:00002%*4X\r\n:00003%*4X\r\n:00004%*4X\r\n:00005%*4X\r\n:00006%*4X\r\n:00007%*4X\r\n:10000%*4X\r\n"; }
+SLNK:SET_WAVLEN             { out "*PW\$1%d";     in "ACK\r\n"; @init { SLNK:GET_WAVLEN; } }
+SLNK:GET_SCALE              { out "*ST\$1";       in ":00000%*4X\r\n:00001%4X\r\n:00002%*4X\r\n:00003%*4X\r\n:00004%*4X\r\n:00005%*4X\r\n:00006%*4X\r\n:00007%*4X\r\n:10000%*4X\r\n"; }
+SLNK:SET_SCALE              { out "*SC\$1%d";     in "ACK\r\n"; } #@init { SLNK:GET_SCALE; } }
+SLNK:BUMP_SCALE             { out "*S%{D|U}\$1";  in "ACK\r\n"; }
+SLNK:SET_TRIGMODE           { out "*ET\$1%1d";    in "ACK\r\n"; }
+SLNK:GET_TRIGMODE           { out "*ST\$1";       in ":00000%*4X\r\n:00001%*4X\r\n:00002%*4X\r\n:00003%*4X\r\n:00004%*4X\r\n:00005%4X\r\n:00006%*4X\r\n:00007%*4X\r\n:10000%*4X\r\n"; }
+SLNK:SET_ACK_MODE           { out "*NMV";         in "ACK\r\n"; }
+SLNK:GET_TRIGLVL            { out "*ST\$1";       in ":00000%*4X\r\n:00001%*4X\r\n:00002%4X\r\n:00003%*4X\r\n:00004%*4X\r\n:00005%*4X\r\n:00006%*4X\r\n:00007%*4X\r\n:10000%*4X\r\n"; }
+SLNK:SET_TRIGLVL            { out "*TL\$1%4.1f";  in "ACK\r\n"; }
+SLNK:SET_ATTENUATOR         { out "*AT\$1%1d";    in "ACK\r\n"; }
+SLNK:GET_ATTENUATOR         { out "*ST\$1";       in ":00000%*4X\r\n:00001%*4X\r\n:00002%*4X\r\n:00003%*4X\r\n:00004%4X\r\n:00005%*4X\r\n:00006%*4X\r\n:00007%*4X\r\n:10000%*4X\r\n"; }
+SLNK:GET_ANTICIPATION_MODE  { out "*ST\$1";       in ":00000%*4X\r\n:00001%*4X\r\n:00002%*4X\r\n:00003%*4X\r\n:00004%*4X\r\n:00005%*4X\r\n:00006%4X\r\n:00007%*4X\r\n:10000%*4X\r\n"; }
+SLNK:GET_ENERGY_MODE        { out "*ST\$1";       in ":00000%*4X\r\n:00001%*4X\r\n:00002%*4X\r\n:00003%*4X\r\n:00004%*4X\r\n:00005%*4X\r\n:00006%*4X\r\n:00007%4X\r\n:10000%*4X\r\n"; }
+SLNK:SET_COMM_MODE          { out "*SS\$1001";    in "ACK\r\n"; }
+SLNK:GET_DET_NAME           { out "*NA\$1";       in "%s"; }
+SLNK:GET_DET_SN             { out "*SN\$1";       in "%d"; }
+SLNK:GET_MEAS               { out "*CV\$1";       in "\$1:%f\r\nACK\r\n"; }
+SLNK:SET_POLL_MODE          { out "*VNM";         in "ACK\r\n"; }
+#SLNK:GET_MIN_RANGE            { out "*RG\$1";     in ":00000%4X\r\n:00001%*4X\r\n:100000000\r\n"; }
+#SLNK:GET_MAX_RANGE            { out "*RG\$1";     in ":00000%*4X\r\n:00001%4X\r\n:100000000\r\n"; }
+SLNK:SET_OFFSET             { out "*SO\$1";       in "ACK\r\n"; }
+SLNK:CLEAR_OFFSET           { out "*CO\$1";       in "ACK\r\n"; }
+SLNK:GET_OFFSET             { out "*DO\$1";       in "Thermal Offset \$1:%f"; }

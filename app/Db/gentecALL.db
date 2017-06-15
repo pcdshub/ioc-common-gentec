@@ -1,3 +1,77 @@
-#
-# Assume $(BASE) is the base PV and $(PORT) is the asyn port.
-#
+record(bo, "$(BASE):RESET") {
+    field(DESC, "Slink, reset device")
+    field(DTYP, "stream")
+    field(OUT, "@slink.proto SLNK:RESET $(PORT)")
+    field(ZNAM, "Not Reset")
+    field(ONAM, "Reset")
+    field(ZSV, "NO_ALARM")
+    field(SCAN, "Passive")
+    field(OSV, "NO_ALARM")
+    #field(FLNK, "$(BASE):COMM_MODE_FANOUT")
+    #field(DOL, "0")
+}
+
+record(fanout, "$(BASE):COMM_MODE_FANOUT") {
+    field(DESC, "Slink, fanout communication mode")
+    field(SELM, "All")
+    field(LNK1, "$(BASE):CH1:SET_COMM_MODE")
+    field(LNK2, "$(BASE):CH2:SET_COMM_MODE")
+    field(PINI, "YES")
+}
+
+record(bo, "$(BASE):CH1:SET_COMM_MODE") {
+    field(DESC, "Slink, set communication mode to ascii)")
+    field(DTYP, "stream")
+    field(OUT, "@slink.proto SLNK:SET_COMM_MODE(1) $(PORT)")
+    field(FLNK, "$(BASE):SET_POLL_MODE")
+}
+
+record(bo, "$(BASE):CH2:SET_COMM_MODE") {
+    field(DESC, "Slink, set communication mode to ascii)")
+    field(DTYP, "stream")
+    field(OUT, "@slink.proto SLNK:SET_COMM_MODE(2) $(PORT)")
+}
+
+record(stringin, "$(BASE):VERSION") {
+    field(DESC, "Slink, get software version")
+    field(DTYP, "stream")
+    field(INP, "@slink.proto SLNK:GET_VERSION $(PORT)")
+    field(PINI, "YES")
+}
+
+record(stringout, "$(BASE):SET_ACK_MODE") {
+    field(DESC, "Slink, set acknowledge mode")
+    field(DTYP, "stream")
+    field(OUT, "@slink.proto SLNK:SET_ACK_MODE $(PORT)")
+    field(PINI, "YES")
+}
+
+record(stringout, "$(BASE):SET_POLL_MODE") {
+    field(DESC, "Slink, set polling mode")
+    field(DTYP, "stream")
+    field(SCAN, "Passive")
+    field(OUT, "@slink.proto SLNK:SET_POLL_MODE $(PORT)")
+    field(FLNK, "$(BASE):ACQ_FANOUT")
+}
+
+record(fanout, "$(BASE):ACQ_FANOUT") {
+    field(DESC, "Slink, fanout acquisition mode")
+    field(SELM, "All")
+    field(LNK1, "$(BASE):CH1:SET_ACQ_MODE")
+    field(LNK2, "$(BASE):CH2:SET_ACQ_MODE")
+}
+
+record(stringout, "$(BASE):CH1:SET_ACQ_MODE") {
+    field(DESC, "Slink, set data acquisition mode")
+    field(DTYP, "stream")
+    field(OUT, "@slink.proto SLNK:SET_ACQ(1) $(PORT)")
+    field(SCAN, "Passive")
+}
+
+record(stringout, "$(BASE):CH2:SET_ACQ_MODE") {
+    field(DESC, "Slink, set data acquisition mode")
+    field(DTYP, "stream")
+    field(OUT, "@slink.proto SLNK:SET_ACQ(2) $(PORT)")
+    field(SCAN, "Passive")
+}
+
