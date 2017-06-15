@@ -22,10 +22,11 @@ gentec_DBD += asyn.dbd
 gentec_DBD += asynRecord.dbd
 gentec_DBD += stream.dbd
 gentec_DBD += drvAsynIPPort.dbd
+gentec_DBD += gentecSubs.dbd
 
 # <name>_registerRecordDeviceDriver.cpp will be created from <name>.dbd
 gentec_SRCS += gentec_registerRecordDeviceDriver.cpp
-gentec_SRCS_DEFAULT += gentecMain.cpp
+gentec_SRCS_DEFAULT += gentecMain.cpp gentecSubs.c
 
 gentec_LIBS += devIocStats
 gentec_LIBS += autosave
