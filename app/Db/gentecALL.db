@@ -7,8 +7,22 @@ record(bo, "$(BASE):RESET") {
     field(ZSV, "NO_ALARM")
     field(SCAN, "Passive")
     field(OSV, "NO_ALARM")
+    field(FLNK, "$(BASE):RESET_DELAY")
     #field(FLNK, "$(BASE):COMM_MODE_FANOUT")
     #field(DOL, "0")
+}
+record(sub, "$(BASE):SYSRESET")
+{
+    field(DESC, "IOC Restart" )
+    field(SNAM, "rebootProc")
+    field(BRSV,"INVALID")
+    field(L,"1")
+}
+record(seq, "$(BASE):RESET_DELAY") {
+    field(DESC, "Slink, delay for reset")
+    field(DOL1, "$(BASE):RESET")
+    field(LNK1, "$(BASE):COMM_MODE_FANOUT")
+    field(DLY1, "10.0")
 }
 
 record(fanout, "$(BASE):COMM_MODE_FANOUT") {
@@ -30,6 +44,7 @@ record(bo, "$(BASE):CH2:SET_COMM_MODE") {
     field(DESC, "Slink, set communication mode to ascii)")
     field(DTYP, "stream")
     field(OUT, "@slink.proto SLNK:SET_COMM_MODE(2) $(PORT)")
+    field(FLNK, "$(BASE):SET_ACK_MODE")
 }
 
 record(stringin, "$(BASE):VERSION") {
@@ -43,7 +58,7 @@ record(stringout, "$(BASE):SET_ACK_MODE") {
     field(DESC, "Slink, set acknowledge mode")
     field(DTYP, "stream")
     field(OUT, "@slink.proto SLNK:SET_ACK_MODE $(PORT)")
-    field(PINI, "YES")
+    field(FLNK, "$(BASE):SET_POLL_MODE")
 }
 
 record(stringout, "$(BASE):SET_POLL_MODE") {
