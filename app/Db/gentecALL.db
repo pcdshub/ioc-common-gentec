@@ -1,28 +1,28 @@
-record(bo, "$(BASE):RESET") {
-    field(DESC, "Slink, reset device")
-    field(DTYP, "stream")
-    field(OUT, "@slink.proto SLNK:RESET $(PORT)")
-    field(ZNAM, "Not Reset")
-    field(ONAM, "Reset")
-    field(ZSV, "NO_ALARM")
-    field(SCAN, "Passive")
-    field(OSV, "NO_ALARM")
-    field(FLNK, "$(BASE):RESET_DELAY")
-    #field(FLNK, "$(BASE):COMM_MODE_FANOUT")
-    #field(DOL, "0")
-}
+#record(bo, "$(BASE):RESET") {                       # Had problems with measurements coming back after
+#    field(DESC, "Slink, reset device")              # reset. Switched to full IOC reboot instead of reset
+#    field(DTYP, "stream")                           # from EEPROM. 
+#    field(OUT, "@slink.proto SLNK:RESET $(PORT)")
+#    field(ZNAM, "Not Reset")
+#    field(ONAM, "Reset")
+#    field(ZSV, "NO_ALARM")
+#    field(SCAN, "Passive")
+#    field(OSV, "NO_ALARM")
+#    field(FLNK, "$(BASE):RESET_DELAY")
+#    #field(FLNK, "$(BASE):COMM_MODE_FANOUT")
+#    #field(DOL, "0")
+#}
+#record(seq, "$(BASE):RESET_DELAY") {
+#    field(DESC, "Slink, delay for reset")
+#    field(DOL1, "$(BASE):RESET")
+#    field(LNK1, "$(BASE):COMM_MODE_FANOUT")
+#    field(DLY1, "10.0")
+#}
 record(sub, "$(BASE):SYSRESET")
 {
     field(DESC, "IOC Restart" )
     field(SNAM, "rebootProc")
     field(BRSV,"INVALID")
     field(L,"1")
-}
-record(seq, "$(BASE):RESET_DELAY") {
-    field(DESC, "Slink, delay for reset")
-    field(DOL1, "$(BASE):RESET")
-    field(LNK1, "$(BASE):COMM_MODE_FANOUT")
-    field(DLY1, "10.0")
 }
 
 record(fanout, "$(BASE):COMM_MODE_FANOUT") {

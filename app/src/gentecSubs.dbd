@@ -1,2 +1,4 @@
 function(gentecNameInit)
 function(gentecNameProc)
+function(gentecValInit)
+function(gentecValProc)
