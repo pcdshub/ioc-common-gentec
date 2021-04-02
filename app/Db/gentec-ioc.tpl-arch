@@ -8,3 +8,25 @@
 #
 # Assume $(BASE) is the base PV of the detector and $(IOC) is the IOC PV.
 
+$(BASE, recursive):CH1:MEAS  0.1 
+$(BASE):CH1:GET_WAVLEN       1          monitor
+$(BASE):CH1:SCALE            0.1 
+$(BASE):CH1:MIN_RANGE        1          monitor
+$(BASE):CH1:MAX_RANGE        1          monitor
+$(BASE):CH1:GET_TRIGMODE     1          monitor
+$(BASE):CH1:SET_TRIGMODE     1          monitor
+$(BASE):CH1:GET_TRIGLVL      1          monitor
+$(BASE):CH1:SET_TRIGLVL      1          monitor
+$(BASE):CH1:GET_OFFSET       1          monitor
+$(BASE):CH1:GET_ATTENUATOR   1          monitor
+$(BASE):CH2:MEAS             0.1 
+$(BASE):CH2:GET_WAVLEN       1          monitor
+$(BASE):CH2:SCALE            0.1 
+$(BASE):CH2:MIN_RANGE        1          monitor
+$(BASE):CH2:MAX_RANGE        1          monitor
+$(BASE):CH2:GET_TRIGMODE     1          monitor
+$(BASE):CH2:SET_TRIGMODE     1          monitor
+$(BASE):CH2:GET_TRIGLVL      1          monitor
+$(BASE):CH2:SET_TRIGLVL      1          monitor
+$(BASE):CH2:GET_OFFSET       1          monitor
+$(BASE):CH2:GET_ATTENUATOR   1          monitor

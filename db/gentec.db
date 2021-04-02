@@ -1,0 +1,628 @@
+#record(bo, "$(BASE,recursive):RESET") {                       # Had problems with measurements coming back after
+#    field(DESC, "Slink, reset device")              # reset. Switched to full IOC reboot instead of reset
+#    field(DTYP, "stream")                           # from EEPROM. 
+#    field(OUT, "@slink.proto SLNK:RESET $(PORT,undefined)")
+#    field(ZNAM, "Not Reset")
+#    field(ONAM, "Reset")
+#    field(ZSV, "NO_ALARM")
+#    field(SCAN, "Passive")
+#    field(OSV, "NO_ALARM")
+#    field(FLNK, "$(BASE,recursive):RESET_DELAY")
+#    #field(FLNK, "$(BASE,recursive):COMM_MODE_FANOUT")
+#    #field(DOL, "0")
+#}
+#record(seq, "$(BASE,recursive):RESET_DELAY") {
+#    field(DESC, "Slink, delay for reset")
+#    field(DOL1, "$(BASE,recursive):RESET")
+#    field(LNK1, "$(BASE,recursive):COMM_MODE_FANOUT")
+#    field(DLY1, "10.0")
+#}
+record(sub, "$(BASE,recursive):SYSRESET")
+{
+    field(DESC, "IOC Restart" )
+    field(SNAM, "rebootProc")
+    field(BRSV,"INVALID")
+    field(L,"1")
+}
+
+record(fanout, "$(BASE,recursive):COMM_MODE_FANOUT") {
+    field(DESC, "Slink, fanout communication mode")
+    field(SELM, "All")
+    field(LNK1, "$(BASE,recursive):CH1:SET_COMM_MODE")
+    field(LNK2, "$(BASE,recursive):CH2:SET_COMM_MODE")
+    field(PINI, "YES")
+}
+
+record(bo, "$(BASE,recursive):CH1:SET_COMM_MODE") {
+    field(DESC, "Slink, set communication mode to ascii)")
+    field(DTYP, "stream")
+    field(OUT, "@slink.proto SLNK:SET_COMM_MODE(1) $(PORT,undefined)")
+    field(FLNK, "$(BASE,recursive):SET_POLL_MODE")
+}
+
+record(bo, "$(BASE,recursive):CH2:SET_COMM_MODE") {
+    field(DESC, "Slink, set communication mode to ascii)")
+    field(DTYP, "stream")
+    field(OUT, "@slink.proto SLNK:SET_COMM_MODE(2) $(PORT,undefined)")
+    field(FLNK, "$(BASE,recursive):SET_ACK_MODE")
+}
+
+record(stringin, "$(BASE,recursive):VERSION") {
+    field(DESC, "Slink, get software version")
+    field(DTYP, "stream")
+    field(INP, "@slink.proto SLNK:GET_VERSION $(PORT,undefined)")
+    field(PINI, "YES")
+}
+
+record(stringout, "$(BASE,recursive):SET_ACK_MODE") {
+    field(DESC, "Slink, set acknowledge mode")
+    field(DTYP, "stream")
+    field(OUT, "@slink.proto SLNK:SET_ACK_MODE $(PORT,undefined)")
+    field(FLNK, "$(BASE,recursive):SET_POLL_MODE")
+}
+
+record(stringout, "$(BASE,recursive):SET_POLL_MODE") {
+    field(DESC, "Slink, set polling mode")
+    field(DTYP, "stream")
+    field(SCAN, "Passive")
+    field(OUT, "@slink.proto SLNK:SET_POLL_MODE $(PORT,undefined)")
+    field(FLNK, "$(BASE,recursive):ACQ_FANOUT")
+}
+
+record(fanout, "$(BASE,recursive):ACQ_FANOUT") {
+    field(DESC, "Slink, fanout acquisition mode")
+    field(SELM, "All")
+    field(LNK1, "$(BASE,recursive):CH1:SET_ACQ_MODE")
+    field(LNK2, "$(BASE,recursive):CH2:SET_ACQ_MODE")
+}
+
+record(stringout, "$(BASE,recursive):CH1:SET_ACQ_MODE") {
+    field(DESC, "Slink, set data acquisition mode")
+    field(DTYP, "stream")
+    field(OUT, "@slink.proto SLNK:SET_ACQ(1) $(PORT,undefined)")
+    field(SCAN, "Passive")
+}
+
+record(stringout, "$(BASE,recursive):CH2:SET_ACQ_MODE") {
+    field(DESC, "Slink, set data acquisition mode")
+    field(DTYP, "stream")
+    field(OUT, "@slink.proto SLNK:SET_ACQ(2) $(PORT,undefined)")
+    field(SCAN, "Passive")
+}
+
+record(bi, "$(BASE,undefined):CH1:GET_ATTENUATOR") {
+    field(DESC, "Slink, set attenuator on/off")
+    field(DTYP, "stream")
+    field(INP, "@slink.proto SLNK:GET_ATTENUATOR(1) $(PORT,undefined)")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+    field(PINI, "YES")
+    #field(SCAN, "1 second")
+}
+ 
+record(bo, "$(BASE,undefined):CH1:SET_ATTENUATOR") {
+    field(DESC, "Slink, set attenuator on/off")
+    field(DTYP, "stream")
+    field(OUT, "@slink.proto SLNK:SET_ATTENUATOR(1) $(PORT,undefined)")
+    field(FLNK, "$(BASE,undefined):CH1:GET_ATTENUATOR")
+} 
+
+record(stringout, "$(BASE,undefined):CH1:SET_ACQ_MODE") {
+    field(DESC, "Slink, set data acquisition mode")
+    field(DTYP, "stream")
+    field(OUT, "@slink.proto SLNK:SET_ACQ(1) $(PORT,undefined)")
+    field(SCAN, "Passive") 
+    field(FLNK, "$(BASE,undefined):CH1:GET_MEAS")
+}
+
+record(longin, "$(BASE,undefined):CH1:GET_WAVLEN") {
+    field(DESC, "Slink, get channel wavelength")
+    field(DTYP, "stream")
+    field(INP, "@slink.proto SLNK:GET_WAVLEN(1) $(PORT,undefined)")
+    field(EGU, "nm")
+    #field(SCAN, "1 second")
+    field(PINI, "YES")
+}
+
+record(longout, "$(BASE,undefined):CH1:SET_WAVLEN") {
+    field(DESC, "Slink, set channel wavelength")
+    field(DTYP, "stream")
+    field(OUT, "@slink.proto SLNK:SET_WAVLEN(1) $(PORT,undefined)")
+    field(EGU, "nm")
+    field(FLNK, "$(BASE,undefined):CH1:GET_WAVLEN") 
+}
+
+record(longout, "$(BASE,undefined):CH1:SET_SCALE") {
+    field(DESC, "Slink, set channel scale")
+    field(DTYP, "stream")
+    field(OUT, "@slink.proto SLNK:SET_SCALE(1) $(PORT,undefined)")
+    field(DRVL, "")
+    field(DRVH, "")
+    field(FLNK, "$(BASE,undefined):CH1:GET_SCALE")
+}
+
+record(longin, "$(BASE,undefined):CH1:GET_SCALE") {
+    field(DESC, "Slink, get det scale")
+    field(DTYP, "stream")
+    field(INP, "@slink.proto SLNK:GET_SCALE(1) $(PORT,undefined)")
+    field(FLNK, "$(BASE,undefined):CH1:TRANS_SCALE")
+    field(PINI, "YES")
+    #field(SCAN, "1 second")
+}
+
+record(aSub, "$(BASE,undefined):CH1:TRANS_SCALE") {
+    field(DESC, "Slink translate scale string")
+    field(INAM, "gentecNameInit")
+    field(SNAM, "gentecNameProc")
+    field(INPA, "$(BASE,undefined):CH1:GET_SCALE NPP") 
+    field(FTA,  "LONG")
+    field(OUTA, "$(BASE,undefined):CH1:SCALE PP")
+    field(FTVA, "STRING")
+    field(FLNK, "$(BASE,undefined):CH1:TRANS_SCALE_VAL")
+}
+
+record(stringin, "$(BASE,undefined):CH1:SCALE") {
+    field(DESC, "Slink, current scale")
+    field(SCAN, "Passive")
+}
+
+record(aSub, "$(BASE,undefined):CH1:TRANS_SCALE_VAL") {
+    field(DESC, "Slink translate scale value")
+    field(INAM, "gentecValInit")
+    field(SNAM, "gentecValProc")
+    field(INPA, "$(BASE,undefined):CH1:GET_SCALE NPP") 
+    field(FTA,  "LONG")
+    field(OUTA, "$(BASE,undefined):CH1:SCALE_VAL PP")
+    field(FTVA, "DOUBLE")
+}
+
+record(ai, "$(BASE,undefined):CH1:SCALE_VAL") {
+    field(DESC, "Slink, current scale val")
+    field(SCAN, "Passive")
+}
+
+record(bo, "$(BASE,undefined):CH1:BUMP_SCALE") {
+    field(DESC, "Slink, inc/dec scale")
+    field(DTYP, "stream")
+    field(OUT, "@slink.proto SLNK:BUMP_SCALE(1) $(PORT,undefined)")
+    field(FLNK, "$(BASE,undefined):CH1:GET_SCALE")
+} 
+
+record(bo, "$(BASE,undefined):CH1:SET_TRIGMODE") {
+    field(DESC, "Slink, enab/disab external trigger")
+    field(DTYP, "stream")
+    field(OUT, "@slink.proto SLNK:SET_TRIGMODE(1) $(PORT,undefined)")
+    field(FLNK, "$(BASE,undefined):CH1:GET_TRIGMODE")
+}
+
+record(bi, "$(BASE,undefined):CH1:GET_TRIGMODE") {
+    field(DESC, "Slink, get trigger mode")
+    field(DTYP, "stream")
+    field(INP, "@slink.proto SLNK:GET_TRIGMODE(1) $(PORT,undefined)")
+    field(ZNAM, "Stream")
+    field(ONAM, "Signal")
+    #field(SCAN, "1 second")
+    field(PINI, "YES")
+}
+
+record(ai, "$(BASE,undefined):CH1:TRIGLVL") { 
+    field(DESC, "Slink, get trigger level")
+    field(DTYP, "stream")
+    field(INP, "@slink.proto SLNK:GET_TRIGLVL(1) $(PORT,undefined)")
+    field(EGU, "%")
+    field(FLNK, "$(BASE,undefined):CH1:GET_TRIGLVL.PROC")
+    #field(SCAN, "1 second")
+}
+
+record(calc, "$(BASE,undefined):CH1:GET_TRIGLVL") {
+    field(DESC, "Slink, convert trigger level")
+    field(CALC, "(A/B)")
+    field(INPA, "$(BASE,undefined):CH1:TRIGLVL.VAL")
+    field(INPB, "20.48")
+    field(PREC, "2")
+    field(EGU, "%")
+}
+
+record(ao, "$(BASE,undefined):CH1:SET_TRIGLVL") {
+    field(DESC, "Slink, set trigger level")
+    field(DTYP, "stream")
+    field(OUT, "@slink.proto SLNK:SET_TRIGLVL(1) $(PORT,undefined)")
+    field(FLNK, "$(BASE,undefined):CH1:TRIGLVL")
+    field(DRVH, "100.0")
+    field(DRVL, "0.0")
+    field(EGU, "%")
+    field(PREC, "1")
+}
+
+record(calc, "$(BASE,undefined):CH1:TRIG_VAL") {
+    field(DESC, "Slink, convert trigger value")
+    field(CALC, "(ABS(A)>B*C*(D/E))?A:F")
+    field(INPA, "$(BASE,undefined):CH1:CALC_MEAS.VAL")
+    field(INPB, "$(BASE,undefined):CH1:SCALE_VAL.VAL")
+    field(INPC, "$(BASE,undefined):CH1:GET_TRIGMODE.RVAL")
+    field(INPD, "$(BASE,undefined):CH1:GET_TRIGLVL.VAL")
+    field(INPE, "100.0")
+    field(INPF, "$(BASE,undefined):CH1:MEAS.VAL")
+    field(FLNK, "$(BASE,undefined):CH1:MEAS")
+}
+
+record(stringin, "$(BASE,undefined):CH1:DET_NAME") {
+    field(DESC, "Slink, get channel det name")
+    field(DTYP, "stream")
+    field(INP, "@slink.proto SLNK:GET_DET_NAME(1) $(PORT,undefined)")
+    field(PINI, "YES")
+}
+
+record(longin, "$(BASE,undefined):CH1:SN") {
+    field(DESC, "Slink, get channel det SN")
+    field(DTYP, "stream")
+    field(INP, "@slink.proto SLNK:GET_DET_SN(1) $(PORT,undefined)")
+    field(PINI, "YES")
+}
+
+record(ai, "$(BASE,undefined):CH1:GET_MEAS") {
+    field(DESC, "Slink, get measurement")
+    field(DTYP, "stream")
+    field(INP, "@slink.proto SLNK:GET_MEAS(1) $(PORT,undefined)")
+    field(SCAN, ".1 second")
+    field(FLNK, "$(BASE,undefined):CH1:CALC_MEAS")
+}
+
+record(calc, "$(BASE,undefined):CH1:CALC_MEAS") {
+    field(DESC, "Slink, meas. with offset")
+    field(CALC, "(A-B)")
+    field(INPA, "$(BASE,undefined):CH1:GET_MEAS.VAL")
+    field(INPB, "$(BASE,undefined):CH1:GET_OFFSET.VAL")
+    field(PREC, "3")
+    field(FLNK, "$(BASE,undefined):CH1:TRIG_VAL")
+}
+
+record(ai, "$(BASE,undefined):CH1:MEAS") {
+    field(DESC, "Slink, measurement RO")
+    field(SCAN, "Passive")
+    field(INP, "$(BASE,undefined):CH1:TRIG_VAL.VAL")
+}
+
+record(ai, "$(BASE,undefined):CH1:GET_OFFSET") {
+    field(DESC, "Slink, get channel det offset")
+    field(DTYP, "stream")
+    field(INP, "@slink.proto SLNK:GET_OFFSET(1) $(PORT,undefined)")
+    #field(SCAN, "1 second")
+    field(PINI, "YES")
+}
+
+record(bo, "$(BASE,undefined):CH1:SET_OFFSET") {
+    field(DESC, "Slink, set channel offset")
+    field(DTYP, "stream")   
+    field(SCAN, "Passive")
+    field(OUT, "@slink.proto SLNK:SET_OFFSET(1) $(PORT,undefined)")
+    field(FLNK, "$(BASE,undefined):CH1:GET_OFFSET")
+}
+
+record(bo, "$(BASE,undefined):CH1:CLEAR_OFFSET") {
+    field(DESC, "Slink, clear channel offset")
+    field(DTYP, "stream")
+    field(SCAN, "Passive")
+    field(OUT, "@slink.proto SLNK:CLEAR_OFFSET(1) $(PORT,undefined)")
+    field(FLNK, "$(BASE,undefined):CH1:GET_OFFSET")
+}
+
+record(stringin, "$(BASE,undefined):CH1:DESCRIPTION") {
+    field(DESC, "Slink, description of channel")
+    field(SCAN, "Passive")
+}
+    
+record(longin, "$(BASE,undefined):CH1:GET_MIN_RANGE") {
+    field(DESC, "Slink, get det min range")
+    field(DTYP, "stream")
+    field(INP, "@slink.proto SLNK:GET_MIN_RANGE(1) $(PORT,undefined)")
+    field(FLNK, "$(BASE,undefined):CH1:TRANS_MIN_RANGE")
+    field(PINI, "YES")
+}
+
+record(aSub, "$(BASE,undefined):CH1:TRANS_MIN_RANGE") {
+    field(DESC, "Slink translate min range string")
+    field(INAM, "gentecNameInit")
+    field(SNAM, "gentecNameProc")
+    field(INPA, "$(BASE,undefined):CH1:GET_MIN_RANGE NPP") 
+    field(FTA,  "LONG")
+    field(OUTA, "$(BASE,undefined):CH1:MIN_RANGE PP")
+    field(FTVA, "STRING")
+}
+
+record(stringin, "$(BASE,undefined):CH1:MIN_RANGE") {
+    field(DESC, "Slink min range string")
+    field(SCAN, "Passive")
+}
+ 
+record(longin, "$(BASE,undefined):CH1:GET_MAX_RANGE") {
+    field(DESC, "Slink, get det max range")
+    field(DTYP, "stream")
+    field(INP, "@slink.proto SLNK:GET_MAX_RANGE(1) $(PORT,undefined)")
+    field(FLNK, "$(BASE,undefined):CH1:TRANS_MAX_RANGE")
+    field(PINI, "YES")
+}
+
+record(aSub, "$(BASE,undefined):CH1:TRANS_MAX_RANGE") {
+    field(DESC, "Slink translate max range string")
+    field(INAM, "gentecNameInit")
+    field(SNAM, "gentecNameProc")
+    field(INPA, "$(BASE,undefined):CH1:GET_MAX_RANGE NPP") 
+    field(FTA,  "LONG")
+    field(OUTA, "$(BASE,undefined):CH1:MAX_RANGE PP")
+    field(FTVA, "STRING")
+}
+
+record(stringin, "$(BASE,undefined):CH1:MAX_RANGE") {
+    field(DESC, "Slink max range string")
+    field(SCAN, "Passive")
+} 
+
+record(bi, "$(BASE,undefined):CH2:GET_ATTENUATOR") {
+    field(DESC, "Slink, set attenuator on/off")
+    field(DTYP, "stream")
+    field(INP, "@slink.proto SLNK:GET_ATTENUATOR(2) $(PORT,undefined)")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+    field(PINI, "YES")
+    #field(SCAN, "1 second")
+}
+ 
+record(bo, "$(BASE,undefined):CH2:SET_ATTENUATOR") {
+    field(DESC, "Slink, set attenuator on/off")
+    field(DTYP, "stream")
+    field(OUT, "@slink.proto SLNK:SET_ATTENUATOR(2) $(PORT,undefined)")
+    field(FLNK, "$(BASE,undefined):CH2:GET_ATTENUATOR")
+} 
+
+record(stringout, "$(BASE,undefined):CH2:SET_ACQ_MODE") {
+    field(DESC, "Slink, set data acquisition mode")
+    field(DTYP, "stream")
+    field(OUT, "@slink.proto SLNK:SET_ACQ(2) $(PORT,undefined)")
+    field(SCAN, "Passive") 
+    field(FLNK, "$(BASE,undefined):CH2:GET_MEAS")
+}
+
+record(longin, "$(BASE,undefined):CH2:GET_WAVLEN") {
+    field(DESC, "Slink, get channel wavelength")
+    field(DTYP, "stream")
+    field(INP, "@slink.proto SLNK:GET_WAVLEN(2) $(PORT,undefined)")
+    field(EGU, "nm")
+    #field(SCAN, "1 second")
+    field(PINI, "YES")
+}
+
+record(longout, "$(BASE,undefined):CH2:SET_WAVLEN") {
+    field(DESC, "Slink, set channel wavelength")
+    field(DTYP, "stream")
+    field(OUT, "@slink.proto SLNK:SET_WAVLEN(2) $(PORT,undefined)")
+    field(EGU, "nm")
+    field(FLNK, "$(BASE,undefined):CH2:GET_WAVLEN") 
+}
+
+record(longout, "$(BASE,undefined):CH2:SET_SCALE") {
+    field(DESC, "Slink, set channel scale")
+    field(DTYP, "stream")
+    field(OUT, "@slink.proto SLNK:SET_SCALE(2) $(PORT,undefined)")
+    field(DRVL, "")
+    field(DRVH, "")
+    field(FLNK, "$(BASE,undefined):CH2:GET_SCALE")
+}
+
+record(longin, "$(BASE,undefined):CH2:GET_SCALE") {
+    field(DESC, "Slink, get det scale")
+    field(DTYP, "stream")
+    field(INP, "@slink.proto SLNK:GET_SCALE(2) $(PORT,undefined)")
+    field(FLNK, "$(BASE,undefined):CH2:TRANS_SCALE")
+    field(PINI, "YES")
+    #field(SCAN, "1 second")
+}
+
+record(aSub, "$(BASE,undefined):CH2:TRANS_SCALE") {
+    field(DESC, "Slink translate scale string")
+    field(INAM, "gentecNameInit")
+    field(SNAM, "gentecNameProc")
+    field(INPA, "$(BASE,undefined):CH2:GET_SCALE NPP") 
+    field(FTA,  "LONG")
+    field(OUTA, "$(BASE,undefined):CH2:SCALE PP")
+    field(FTVA, "STRING")
+    field(FLNK, "$(BASE,undefined):CH2:TRANS_SCALE_VAL")
+}
+
+record(stringin, "$(BASE,undefined):CH2:SCALE") {
+    field(DESC, "Slink, current scale")
+    field(SCAN, "Passive")
+}
+
+record(aSub, "$(BASE,undefined):CH2:TRANS_SCALE_VAL") {
+    field(DESC, "Slink translate scale value")
+    field(INAM, "gentecValInit")
+    field(SNAM, "gentecValProc")
+    field(INPA, "$(BASE,undefined):CH2:GET_SCALE NPP") 
+    field(FTA,  "LONG")
+    field(OUTA, "$(BASE,undefined):CH2:SCALE_VAL PP")
+    field(FTVA, "DOUBLE")
+}
+
+record(ai, "$(BASE,undefined):CH2:SCALE_VAL") {
+    field(DESC, "Slink, current scale val")
+    field(SCAN, "Passive")
+}
+
+record(bo, "$(BASE,undefined):CH2:BUMP_SCALE") {
+    field(DESC, "Slink, inc/dec scale")
+    field(DTYP, "stream")
+    field(OUT, "@slink.proto SLNK:BUMP_SCALE(2) $(PORT,undefined)")
+    field(FLNK, "$(BASE,undefined):CH2:GET_SCALE")
+} 
+
+record(bo, "$(BASE,undefined):CH2:SET_TRIGMODE") {
+    field(DESC, "Slink, enab/disab external trigger")
+    field(DTYP, "stream")
+    field(OUT, "@slink.proto SLNK:SET_TRIGMODE(2) $(PORT,undefined)")
+    field(FLNK, "$(BASE,undefined):CH2:GET_TRIGMODE")
+}
+
+record(bi, "$(BASE,undefined):CH2:GET_TRIGMODE") {
+    field(DESC, "Slink, get trigger mode")
+    field(DTYP, "stream")
+    field(INP, "@slink.proto SLNK:GET_TRIGMODE(2) $(PORT,undefined)")
+    field(ZNAM, "Stream")
+    field(ONAM, "Signal")
+    #field(SCAN, "1 second")
+    field(PINI, "YES")
+}
+
+record(ai, "$(BASE,undefined):CH2:TRIGLVL") { 
+    field(DESC, "Slink, get trigger level")
+    field(DTYP, "stream")
+    field(INP, "@slink.proto SLNK:GET_TRIGLVL(2) $(PORT,undefined)")
+    field(EGU, "%")
+    field(FLNK, "$(BASE,undefined):CH2:GET_TRIGLVL.PROC")
+    #field(SCAN, "1 second")
+}
+
+record(calc, "$(BASE,undefined):CH2:GET_TRIGLVL") {
+    field(DESC, "Slink, convert trigger level")
+    field(CALC, "(A/B)")
+    field(INPA, "$(BASE,undefined):CH2:TRIGLVL.VAL")
+    field(INPB, "20.48")
+    field(PREC, "2")
+    field(EGU, "%")
+}
+
+record(ao, "$(BASE,undefined):CH2:SET_TRIGLVL") {
+    field(DESC, "Slink, set trigger level")
+    field(DTYP, "stream")
+    field(OUT, "@slink.proto SLNK:SET_TRIGLVL(2) $(PORT,undefined)")
+    field(FLNK, "$(BASE,undefined):CH2:TRIGLVL")
+    field(DRVH, "100.0")
+    field(DRVL, "0.0")
+    field(EGU, "%")
+    field(PREC, "1")
+}
+
+record(calc, "$(BASE,undefined):CH2:TRIG_VAL") {
+    field(DESC, "Slink, convert trigger value")
+    field(CALC, "(ABS(A)>B*C*(D/E))?A:F")
+    field(INPA, "$(BASE,undefined):CH2:CALC_MEAS.VAL")
+    field(INPB, "$(BASE,undefined):CH2:SCALE_VAL.VAL")
+    field(INPC, "$(BASE,undefined):CH2:GET_TRIGMODE.RVAL")
+    field(INPD, "$(BASE,undefined):CH2:GET_TRIGLVL.VAL")
+    field(INPE, "100.0")
+    field(INPF, "$(BASE,undefined):CH2:MEAS.VAL")
+    field(FLNK, "$(BASE,undefined):CH2:MEAS")
+}
+
+record(stringin, "$(BASE,undefined):CH2:DET_NAME") {
+    field(DESC, "Slink, get channel det name")
+    field(DTYP, "stream")
+    field(INP, "@slink.proto SLNK:GET_DET_NAME(2) $(PORT,undefined)")
+    field(PINI, "YES")
+}
+
+record(longin, "$(BASE,undefined):CH2:SN") {
+    field(DESC, "Slink, get channel det SN")
+    field(DTYP, "stream")
+    field(INP, "@slink.proto SLNK:GET_DET_SN(2) $(PORT,undefined)")
+    field(PINI, "YES")
+}
+
+record(ai, "$(BASE,undefined):CH2:GET_MEAS") {
+    field(DESC, "Slink, get measurement")
+    field(DTYP, "stream")
+    field(INP, "@slink.proto SLNK:GET_MEAS(2) $(PORT,undefined)")
+    field(SCAN, ".1 second")
+    field(FLNK, "$(BASE,undefined):CH2:CALC_MEAS")
+}
+
+record(calc, "$(BASE,undefined):CH2:CALC_MEAS") {
+    field(DESC, "Slink, meas. with offset")
+    field(CALC, "(A-B)")
+    field(INPA, "$(BASE,undefined):CH2:GET_MEAS.VAL")
+    field(INPB, "$(BASE,undefined):CH2:GET_OFFSET.VAL")
+    field(PREC, "3")
+    field(FLNK, "$(BASE,undefined):CH2:TRIG_VAL")
+}
+
+record(ai, "$(BASE,undefined):CH2:MEAS") {
+    field(DESC, "Slink, measurement RO")
+    field(SCAN, "Passive")
+    field(INP, "$(BASE,undefined):CH2:TRIG_VAL.VAL")
+}
+
+record(ai, "$(BASE,undefined):CH2:GET_OFFSET") {
+    field(DESC, "Slink, get channel det offset")
+    field(DTYP, "stream")
+    field(INP, "@slink.proto SLNK:GET_OFFSET(2) $(PORT,undefined)")
+    #field(SCAN, "1 second")
+    field(PINI, "YES")
+}
+
+record(bo, "$(BASE,undefined):CH2:SET_OFFSET") {
+    field(DESC, "Slink, set channel offset")
+    field(DTYP, "stream")   
+    field(SCAN, "Passive")
+    field(OUT, "@slink.proto SLNK:SET_OFFSET(2) $(PORT,undefined)")
+    field(FLNK, "$(BASE,undefined):CH2:GET_OFFSET")
+}
+
+record(bo, "$(BASE,undefined):CH2:CLEAR_OFFSET") {
+    field(DESC, "Slink, clear channel offset")
+    field(DTYP, "stream")
+    field(SCAN, "Passive")
+    field(OUT, "@slink.proto SLNK:CLEAR_OFFSET(2) $(PORT,undefined)")
+    field(FLNK, "$(BASE,undefined):CH2:GET_OFFSET")
+}
+
+record(stringin, "$(BASE,undefined):CH2:DESCRIPTION") {
+    field(DESC, "Slink, description of channel")
+    field(SCAN, "Passive")
+}
+    
+record(longin, "$(BASE,undefined):CH2:GET_MIN_RANGE") {
+    field(DESC, "Slink, get det min range")
+    field(DTYP, "stream")
+    field(INP, "@slink.proto SLNK:GET_MIN_RANGE(2) $(PORT,undefined)")
+    field(FLNK, "$(BASE,undefined):CH2:TRANS_MIN_RANGE")
+    field(PINI, "YES")
+}
+
+record(aSub, "$(BASE,undefined):CH2:TRANS_MIN_RANGE") {
+    field(DESC, "Slink translate min range string")
+    field(INAM, "gentecNameInit")
+    field(SNAM, "gentecNameProc")
+    field(INPA, "$(BASE,undefined):CH2:GET_MIN_RANGE NPP") 
+    field(FTA,  "LONG")
+    field(OUTA, "$(BASE,undefined):CH2:MIN_RANGE PP")
+    field(FTVA, "STRING")
+}
+
+record(stringin, "$(BASE,undefined):CH2:MIN_RANGE") {
+    field(DESC, "Slink min range string")
+    field(SCAN, "Passive")
+}
+ 
+record(longin, "$(BASE,undefined):CH2:GET_MAX_RANGE") {
+    field(DESC, "Slink, get det max range")
+    field(DTYP, "stream")
+    field(INP, "@slink.proto SLNK:GET_MAX_RANGE(2) $(PORT,undefined)")
+    field(FLNK, "$(BASE,undefined):CH2:TRANS_MAX_RANGE")
+    field(PINI, "YES")
+}
+
+record(aSub, "$(BASE,undefined):CH2:TRANS_MAX_RANGE") {
+    field(DESC, "Slink translate max range string")
+    field(INAM, "gentecNameInit")
+    field(SNAM, "gentecNameProc")
+    field(INPA, "$(BASE,undefined):CH2:GET_MAX_RANGE NPP") 
+    field(FTA,  "LONG")
+    field(OUTA, "$(BASE,undefined):CH2:MAX_RANGE PP")
+    field(FTVA, "STRING")
+}
+
+record(stringin, "$(BASE,undefined):CH2:MAX_RANGE") {
+    field(DESC, "Slink max range string")
+    field(SCAN, "Passive")
+} 
+

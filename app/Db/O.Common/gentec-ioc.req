@@ -1,0 +1,24 @@
+# iocAdmin autosave template
+# Format:
+# <PVNAME>
+# (Nothing to autosave for iocAdmin)
+#
+# List of PVs to autosave.  Assume $(BASE,recursive) is the detector base PV and
+# $(IOC,undefined) is the IOC base PV.
+#
+
+$(BASE,recursive):CH1:SET_TRIGLVL
+$(BASE,recursive):CH1:GET_TRIGLVL
+$(BASE,recursive):CH1:SET_ATTENUATOR
+$(BASE,recursive):CH1:SET_TRIGMODE
+$(BASE,recursive):CH1:DESCRIPTION
+$(BASE,recursive):CH2:SET_TRIGLVL
+$(BASE,recursive):CH2:GET_TRIGLVL
+$(BASE,recursive):CH2:SET_ATTENUATOR
+$(BASE,recursive):CH2:SET_TRIGMODE
+$(BASE,recursive):CH2:DESCRIPTION
+
+$(BASE,recursive):CH1:SET_WAVLEN
+$(BASE,recursive):CH1:SET_TRIGL
+$(BASE,recursive):CH2:SET_WAVLEN
+$(BASE,recursive):CH2:SET_TRIGLVL
